@@ -91,7 +91,7 @@ func TestCheckExistingToken(t *testing.T) {
 		}
 
 		dir, _ := os.UserHomeDir()
-		expected := fmt.Sprintf("stat %s/.avp/test_config.json: no such file or directory", dir)
+		expected := fmt.Sprintf("stat %s/.avp/%s: no such file or directory", dir, utils.GetConfigFileName())
 		if err.Error() != expected {
 			t.Errorf("expected: %s, got: %s.", expected, err.Error())
 		}
