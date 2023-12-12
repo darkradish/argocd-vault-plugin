@@ -38,9 +38,17 @@ func GetConfigFileName(vaultClient *api.Client, identifier string) (string) {
 	var config_ext = ".json"
 	var config_name = "_" + vaultClient.Namespace()
 
-	hasher := sha1.New()
-    hasher.Write([]byte(vaultClient.Address()))
-	var config_addr_name = "_" + base64.URLEncoding.EncodeToString(hasher.Sum(nil))
+	addr, addr_set := os.LookupEnv("VAULT_ADDR")
+	vault_ns, vault_ns_set := os.LookupEnv("VAULT_NAMESPACE")
+
+	if addr_set {
+		hasher := sha1.New()
+    	hasher.Write([]byte(addr))
+		config_addr_name = "_" + base64.URLEncoding.EncodeToString(hasher.Sum(nil))
+	}
+	if vault_ns_set {
+		config_name = "_" + vault_ns
+	}
 
 	config := config_prefix + config_addr_name + config_name + config_ext
 	
