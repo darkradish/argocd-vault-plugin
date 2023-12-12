@@ -17,38 +17,14 @@ import (
 	"github.com/spf13/viper"
 )
 
-func PurgeTokenCache() error {
-	home, err := os.UserHomeDir()
-	if err != nil {
-		return err
-	}
-
-	avpConfigFolderPath := filepath.Join(home, ".avp")
-
-	err = os.RemoveAll(avpConfigFolderPath)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-
-func GetConfigFileName(vaultClient *api.Client, identifier string) (string) {
-	var config_prefix = identifier
+func GetConfigFileName(vaultClient *api.Client) (string) {
+	var config_prefix = "config"
 	var config_ext = ".json"
 	var config_name = "_" + vaultClient.Namespace()
 
-	addr, addr_set := os.LookupEnv("VAULT_ADDR")
-	vault_ns, vault_ns_set := os.LookupEnv("VAULT_NAMESPACE")
-
-	if addr_set {
-		hasher := sha1.New()
-    	hasher.Write([]byte(addr))
-		config_addr_name = "_" + base64.URLEncoding.EncodeToString(hasher.Sum(nil))
-	}
-	if vault_ns_set {
-		config_name = "_" + vault_ns
-	}
+	hasher := sha1.New()
+    hasher.Write([]byte(vaultClient.Address()))
+	var config_addr_name = "_" + base64.URLEncoding.EncodeToString(hasher.Sum(nil))
 
 	config := config_prefix + config_addr_name + config_name + config_ext
 	
