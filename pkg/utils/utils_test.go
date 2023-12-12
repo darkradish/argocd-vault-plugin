@@ -23,10 +23,12 @@ func writeToken(identifier string, token string) error {
 	path := filepath.Join(home, ".avp")
 	os.Mkdir(path, 0755)
 	data := map[string]interface{}{
+		"vault_addr": os.Getenv("VAULT_ADDR"),
+		"vault_namespace": os.Getenv("VAULT_NAMESPACE"),
 		"vault_token": token,
 	}
 	file, _ := json.MarshalIndent(data, "", " ")
-	err = os.WriteFile(filepath.Join(path, fmt.Sprintf("%s_config.json", identifier)), file, 0644)
+	err = os.WriteFile(filepath.Join(path, utils.GetConfigFileName(identifier)), file, 0644)
 	if err != nil {
 		return err
 	}
@@ -45,7 +47,7 @@ func removeToken() error {
 
 func readToken(identifier string) interface{} {
 	home, _ := os.UserHomeDir()
-	path := filepath.Join(home, ".avp", fmt.Sprintf("%s_config.json", identifier))
+	path := filepath.Join(home, ".avp", utils.GetConfigFileName(identifier))
 	dat, _ := os.ReadFile(path)
 	var result map[string]interface{}
 	json.Unmarshal([]byte(dat), &result)
