@@ -21,7 +21,8 @@ func TestAppRoleLogin(t *testing.T) {
 		t.Fatalf("expected no errors but got: %s", err)
 	}
 
-	cachedToken, err := utils.ReadExistingToken(fmt.Sprintf("approle_%s", roleID))
+	cachedToken, err := utils.ReadExistingToken(cluster.Cores[0].Client, fmt.Sprintf("approle_%s", roleID))
+
 	if err != nil {
 		t.Fatalf("expected cached vault token but got: %s", err)
 	}
@@ -31,7 +32,8 @@ func TestAppRoleLogin(t *testing.T) {
 		t.Fatalf("expected no errors but got: %s", err)
 	}
 
-	newCachedToken, err := utils.ReadExistingToken(fmt.Sprintf("approle_%s", roleID))
+	newCachedToken, err := utils.ReadExistingToken(cluster.Cores[0].Client, fmt.Sprintf("approle_%s", roleID))
+
 	if err != nil {
 		t.Fatalf("expected cached vault token but got: %s", err)
 	}
