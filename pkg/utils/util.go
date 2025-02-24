@@ -12,8 +12,6 @@ import (
 	"os"
 	"path/filepath"
 	"time"
-	"crypto/sha1"
-    "encoding/base64"
 
 	"github.com/hashicorp/vault/api"
 	"github.com/spf13/viper"
@@ -53,7 +51,6 @@ func ReadExistingToken(vaultClient *api.Client, identifier string) ([]byte, erro
 	if err != nil {
 		return nil, err
 	}
-	
 
 	avpConfigPath := filepath.Join(home, ".avp", GetConfigFileName(vaultClient, identifier))
 	if _, err := os.Stat(avpConfigPath); err != nil {
