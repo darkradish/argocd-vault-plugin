@@ -1,7 +1,9 @@
 package utils
 
 import (
+	"crypto/sha1"
 	"crypto/tls"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -10,8 +12,6 @@ import (
 	"os"
 	"path/filepath"
 	"time"
-	"crypto/sha1"
-    "encoding/base64"
 
 	"github.com/hashicorp/vault/api"
 	"github.com/spf13/viper"
@@ -32,28 +32,25 @@ func PurgeTokenCache() error {
 	return nil
 }
 
-
-func GetConfigFileName(vaultClient *api.Client, identifier string) (string) {
+func GetConfigFileName(vaultClient *api.Client, identifier string) string {
 	var config_prefix = identifier
 	var config_ext = ".json"
 	var config_name = "_" + vaultClient.Namespace()
 
 	hasher := sha1.New()
-    hasher.Write([]byte(vaultClient.Address()))
+	hasher.Write([]byte(vaultClient.Address()))
 	var config_addr_name = "_" + base64.URLEncoding.EncodeToString(hasher.Sum(nil))
 
 	config := config_prefix + config_addr_name + config_name + config_ext
-	
+
 	return config
 }
-
 
 func ReadExistingToken(vaultClient *api.Client, identifier string) ([]byte, error) {
 	home, err := os.UserHomeDir()
 	if err != nil {
 		return nil, err
 	}
-	
 
 	avpConfigPath := filepath.Join(home, ".avp", GetConfigFileName(vaultClient, identifier))
 	if _, err := os.Stat(avpConfigPath); err != nil {
@@ -82,8 +79,8 @@ func ReadExistingToken(vaultClient *api.Client, identifier string) ([]byte, erro
 func LoginWithCachedToken(vaultClient *api.Client, identifier string) error {
 	if viper.GetBool("disableCache") {
 		return fmt.Errorf("Token cache feature is disabled")
-	}	else {
-		byteValue, err := ReadExistingToken(identifier)
+	} else {
+		byteValue, err := ReadExistingToken(vaultClient, identifier)
 		if err != nil {
 			return err
 		}
@@ -113,7 +110,7 @@ func SetToken(vaultClient *api.Client, identifier string, token string) error {
 
 	if viper.GetBool("disableCache") {
 		return fmt.Errorf("Token cache feature is disabled")
-	}	else {
+	} else {
 		home, err := os.UserHomeDir()
 		if err != nil {
 			return fmt.Errorf("Could not access home directory: %s", err.Error())
@@ -127,9 +124,9 @@ func SetToken(vaultClient *api.Client, identifier string, token string) error {
 			}
 		}
 		data := map[string]interface{}{
-			"vault_addr": os.Getenv("VAULT_ADDR"),
+			"vault_addr":      os.Getenv("VAULT_ADDR"),
 			"vault_namespace": os.Getenv("VAULT_NAMESPACE"),
-			"vault_token": token,
+			"vault_token":     token,
 		}
 		file, err := json.MarshalIndent(data, "", " ")
 		if err != nil {
