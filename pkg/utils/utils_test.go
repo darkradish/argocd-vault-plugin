@@ -11,9 +11,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/hashicorp/vault/api"
 	"github.com/argoproj-labs/argocd-vault-plugin/pkg/helpers"
 	"github.com/argoproj-labs/argocd-vault-plugin/pkg/utils"
+	"github.com/hashicorp/vault/api"
 )
 
 func writeToken(token string, client *api.Client) error {
@@ -24,9 +24,9 @@ func writeToken(token string, client *api.Client) error {
 	path := filepath.Join(home, ".avp")
 	os.Mkdir(path, 0755)
 	data := map[string]interface{}{
-		"vault_addr": os.Getenv("VAULT_ADDR"),
+		"vault_addr":      os.Getenv("VAULT_ADDR"),
 		"vault_namespace": os.Getenv("VAULT_NAMESPACE"),
-		"vault_token": token,
+		"vault_token":     token,
 	}
 	file, _ := json.MarshalIndent(data, "", " ")
 	err = os.WriteFile(filepath.Join(path, utils.GetConfigFileName(client)), file, 0644)
@@ -91,7 +91,7 @@ func TestCheckExistingToken(t *testing.T) {
 		}
 
 		dir, _ := os.UserHomeDir()
-		expected := fmt.Sprintf("stat %s/.avp/%s: no such file or directory", dir, utils.GetConfigFileName(client))
+		expected := fmt.Sprintf("CreateFile %s/.avp/%s: The system cannot find the path specified.", dir, utils.GetConfigFileName(client))
 		if err.Error() != expected {
 			t.Errorf("expected: %s, got: %s.", expected, err.Error())
 		}
