@@ -52,7 +52,7 @@ func TestUserPassLogin(t *testing.T) {
 		t.Fatalf("expected no errors but got: %s", err)
 	}
 
-	secondCachedToken, err := utils.ReadExistingToken(fmt.Sprintf("userpass_%s", secondUsername))
+	secondCachedToken, err := utils.ReadExistingToken(cluster.Cores[0].Client, fmt.Sprintf("userpass_%s", secondUsername))
 	if err != nil {
 		t.Fatalf("expected cached vault token but got: %s", err)
 	}

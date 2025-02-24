@@ -46,7 +46,7 @@ func removeToken() error {
 	return nil
 }
 
-func readToken(client *api.Client) interface{} {
+func readToken(client *api.Client, identifier string) interface{} {
 	home, _ := os.UserHomeDir()
 	path := filepath.Join(home, ".avp", utils.GetConfigFileName(client, identifier))
 	dat, _ := os.ReadFile(path)
@@ -60,7 +60,7 @@ func TestCheckExistingToken(t *testing.T) {
 	defer ln.Close()
 
 	t.Run("will set token if valid", func(t *testing.T) {
-		err := writeToken("test", roottoken)
+		err := writeToken("test", roottoken, client)
 		if err != nil {
 			t.Fatal(err)
 		}
