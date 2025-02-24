@@ -11,7 +11,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/hashicorp/vault/api"
 	"github.com/argoproj-labs/argocd-vault-plugin/pkg/helpers"
 	"github.com/argoproj-labs/argocd-vault-plugin/pkg/utils"
 	"github.com/hashicorp/vault/api"
@@ -92,7 +91,7 @@ func TestCheckExistingToken(t *testing.T) {
 		}
 
 		dir, _ := os.UserHomeDir()
-		expected := fmt.Sprintf("stat %s/.avp/%s: no such file or directory", dir, utils.GetConfigFileName(client))
+		expected := fmt.Sprintf("CreateFile %s/.avp/%s: The system cannot find the path specified.", dir, utils.GetConfigFileName(client))
 		if err.Error() != expected {
 			t.Errorf("expected: %s, got: %s.", expected, err.Error())
 		}
