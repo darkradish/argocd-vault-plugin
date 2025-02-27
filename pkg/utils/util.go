@@ -132,7 +132,7 @@ func SetToken(vaultClient *api.Client, identifier string, token string) error {
 		if err != nil {
 			return fmt.Errorf("Could not marshal token data: %s", err.Error())
 		}
-		err = os.WriteFile(filepath.Join(path, GetConfigFileName(identifier)), file, 0644)
+		err = os.WriteFile(filepath.Join(path, GetConfigFileName(vaultClient, identifier)), file, 0644)
 		if err != nil {
 			return fmt.Errorf("Could not write token to file, will need to login to Vault on subsequent runs: %s", err.Error())
 		}
